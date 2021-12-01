@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="On explicit save action" serverName="zeinodin.org" autoUploadExternalChanges="true">
+    <serverData>
+      <paths name="zeinodin.org">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/project" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/public" local="$PROJECT_DIR$/public" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ON_EXPLICIT_SAVE" />
+  </component>
+</project>

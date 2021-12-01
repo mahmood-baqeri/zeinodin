@@ -1,0 +1,17 @@
+
+
+.center {
+	text-align: center;
+}
+
+p.box {
+	padding: 10px;
+	border-radius: 3px;
+	box-shadow: 0 0 2px 1px #fff inset, 0 0 1px rgba( 0, 0, 0, 0.3 );
+	min-width: 500px;
+}
+
+
+input.wide {
+	width: 250px;
+}
