@@ -48,5 +48,7 @@
 @yield('content')
 @include('layouts.user.footer')
 
+
+@stack('js-section')
 </body>
 </html>

@@ -402,7 +402,7 @@ function delete_user(id) {
 function insert_course() {
     var id = '';
     const dir = 'insert_course';
-    const items = ['title', 'text_short', 'text', 'user_id', 'price', 'time', 'capacity', 'status', 'date_insert', 'file'];
+    const items = ['title', 'text_short', 'text', 'user_id', 'price', 'time', 'capacity', 'status', 'date_insert', 'file' ,'spotKey'];
     const image = URL + "image/course/image.png";
     const reload = 0;
     const insert = 1;
@@ -410,9 +410,10 @@ function insert_course() {
 }
 
 function edit_course(id) {
+    alert(121212);
     var id = id;
     const dir = 'edit_course';
-    const items = ['title', 'text_short', 'text', 'user_id', 'price', 'time', 'capacity', 'status', 'date_insert', 'file'];
+    const items = ['title', 'text_short', 'text', 'user_id', 'price', 'time', 'capacity', 'status', 'date_insert', 'file' ,'spotKey'];
     const image = "";
     const reload = 0;
     insert_data(id, dir, items, image, reload);

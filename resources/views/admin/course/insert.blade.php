@@ -6,7 +6,7 @@
             <div class="col-lg-12" >
                 <div class="loader"></div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">ثبت دوره جدید</div>
+                    <div class="panel-heading">ثبت رویداد جدید</div>
                     <div class="panel-body panel_insert">
                         <form id="form1">
                             <div class="alert alert-danger" style="display:none;"></div>
@@ -54,6 +54,14 @@
                                     </div>
                                     <div class="col-75">
                                         <input type="text" id="price">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-25">
+                                        <label>کلید دوره در اسپات پلیر</label>
+                                    </div>
+                                    <div class="col-75">
+                                        <input type="text" id="spotKey">
                                     </div>
                                 </div>
                                 <div class="row">

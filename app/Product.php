@@ -23,7 +23,8 @@ class Product extends Model
         'gallery',
         'status',
         'metaKeywords',
-        'metaDescription'
+        'metaDescription',
+        'spotKey',
     ];
 
     public function author()

@@ -18,7 +18,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name', 'last_name', 'gender', 'birthday', 'name_co', 'phone', 'mobile', 'email',
         'website', 'password', 'text', 'address', 'category_id', 'role', 'status','type_user',
-        'position',
+        'position', 'is_user'
     ];
 
     /**
@@ -62,5 +62,15 @@ class User extends Authenticatable
         $array[0]='غیر فعال';
         $array[1]='فعال';
         return $array;
+    }
+
+    public function products()
+    {
+        return $this->hasMany(ProductSale::class)->latest()->where('status' , 1);
+    }
+
+    public function courses()
+    {
+        return $this->hasMany(InsertCourse::class)->latest()->where('status' , 1);
     }
 }

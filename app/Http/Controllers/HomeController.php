@@ -38,9 +38,9 @@ class HomeController extends Controller
         $site = Site::where(['status' => '1'])->orderby('id', 'desc')->get();
 
         $boniadNewsSingle = BoniadNews::where('important', '1')->first();;
-        $boniadNewsSingleId = $boniadNewsSingle ?  $boniadNewsSingle->id : 0;
-        $boniadNews = BoniadNews::where('id' , '!=' , $boniadNewsSingleId )->where('status', '1')->orderby('id', 'desc')->take(5)->get();
-        if(!$boniadNewsSingle)
+        $boniadNewsSingleId = $boniadNewsSingle ? $boniadNewsSingle->id : 0;
+        $boniadNews = BoniadNews::where('id', '!=', $boniadNewsSingleId)->where('status', '1')->orderby('id', 'desc')->take(5)->get();
+        if (!$boniadNewsSingle)
             $boniadNewsSingle = $boniadNews[0];
 
         $id_news = Menu::where('name', 'اخبار')->first();
@@ -60,7 +60,7 @@ class HomeController extends Controller
         $course = Course::where(['status' => '1', 'deleted_at' => NULL])->orderby('id', 'desc')->take(4)->get();
         $customer = Customer::get();
         return view('index', ['menu' => $menu, 'contact_data' => $contact_data, 'slider' => $slider, 'site' => $site, 'news' => $news,
-            'user' => $user, 'service' => $service, 'customer' => $customer, 'course' => $course , 'boniadNewsSingle' =>$boniadNewsSingle , 'boniadNews' =>$boniadNews ]);
+            'user' => $user, 'service' => $service, 'customer' => $customer, 'course' => $course, 'boniadNewsSingle' => $boniadNewsSingle, 'boniadNews' => $boniadNews]);
     }
 
     public function about()
@@ -83,6 +83,7 @@ class HomeController extends Controller
 
         return view('about', ['contact_data' => $contact_data, 'data' => $vision, 'menu' => $menu]);
     }
+
     public function mission()
     {
         //m   ماموریت
@@ -101,9 +102,9 @@ class HomeController extends Controller
 
         $team = About::where('type', 3)->first();
         $user = [];
-        $user['user0'] = UserAbout::where('status' , 0)->orderby('id', 'desc')->get();
-        $user['user1'] = UserAbout::where('status' , 1)->orderby('id', 'desc')->get();
-        $user['user2'] = UserAbout::where('status' , 2)->orderby('id', 'desc')->get();
+        $user['user0'] = UserAbout::where('status', 0)->orderby('id', 'desc')->get();
+        $user['user1'] = UserAbout::where('status', 1)->orderby('id', 'desc')->get();
+        $user['user2'] = UserAbout::where('status', 2)->orderby('id', 'desc')->get();
         $user['all'] = UserAbout::orderby('id', 'desc')->get();
         return view('team', ['contact_data' => $contact_data, 'data' => $team, 'menu' => $menu, 'user' => $user]);
     }
@@ -115,7 +116,7 @@ class HomeController extends Controller
         $contact_data = Contact::where('id', '1')->first();
         $menu = Menu::where(['parent_id' => '0', ['name', '!=', 'خدمات']])->get();
 
-        $guide = About::where('type', 5 )->first();
+        $guide = About::where('type', 5)->first();
         $user = UserAbout::orderby('id', 'desc')->get();
         return view('guide', ['contact_data' => $contact_data, 'data' => $guide, 'menu' => $menu, 'user' => $user])->with('paySuccess', 'ok');
     }
@@ -126,7 +127,7 @@ class HomeController extends Controller
         $contact_data = Contact::where('id', '1')->first();
         $menu = Menu::where(['parent_id' => '0', ['name', '!=', 'خدمات']])->get();
 
-        $guide = About::where('type', 4 )->first();
+        $guide = About::where('type', 4)->first();
         $user = UserAbout::orderby('id', 'desc')->get();
         return view('statute', ['contact_data' => $contact_data, 'data' => $guide, 'menu' => $menu, 'user' => $user])->with('paySuccess', 'ok');
     }
@@ -258,7 +259,7 @@ class HomeController extends Controller
         if ($request->category_id == 0)
             $blogs = Blog::where('status', '1')->where('name', 'LIKE', '%' . $request->text . '%')->orderby('id', 'desc')->get();
         else
-            $blogs = Blog::where('status', '1')->where('category_id' , $request->category_id )->where('name', 'LIKE', '%' . $request->text . '%')->orderby('id', 'desc')->get();
+            $blogs = Blog::where('status', '1')->where('category_id', $request->category_id)->where('name', 'LIKE', '%' . $request->text . '%')->orderby('id', 'desc')->get();
 
         $searchText = $request->text;
         return view('blogSearch', ['contact_data' => $contact_data, 'menu' => $menu, 'blogs' => $blogs, 'searchText' => $searchText]);
@@ -304,10 +305,10 @@ class HomeController extends Controller
             $all = About::where('text', 'LIKE', '%' . $request->text . '%')->get();
 
         elseif ($request->type == 6)
-            $all = Media::where('title', 'LIKE', '%' . $request->text . '%')->where('type' , 1)->get();
+            $all = Media::where('title', 'LIKE', '%' . $request->text . '%')->where('type', 1)->get();
 
         elseif ($request->type == 7)
-            $all = Media::where('title', 'LIKE', '%' . $request->text . '%')->where('type' ,'!=', 1)->get();
+            $all = Media::where('title', 'LIKE', '%' . $request->text . '%')->where('type', '!=', 1)->get();
 
         else
             $all = Page::where('status', '1')->where('title', 'LIKE', '%' . $request->text . '%')->orderby('id', 'desc')->get();

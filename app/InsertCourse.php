@@ -9,6 +9,7 @@ class InsertCourse extends Model
     protected $table="insert_course";
     public $timestamps=false;
     protected $fillable = [
+        'user_id',
         'name',
         'email',
         'mobile',
@@ -22,6 +23,10 @@ class InsertCourse extends Model
         'discount',
         'discount_price',
         'status',
+
+        'spotPlayerId',
+        'spotPlayerKey',
+        'spotPlayerUrl',
     ];
 
     public function getCourse(){
@@ -29,5 +34,14 @@ class InsertCourse extends Model
     }
     public function getSlider(){
         return $this->hasOne(Slider::class,'id','slider_id')->withDefault(['title'=>'']);
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

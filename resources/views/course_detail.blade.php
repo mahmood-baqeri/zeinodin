@@ -144,6 +144,7 @@
                     </div>
                     <div class="modal-body">
                         <div id="login" class="box border-top-0 p-lg-4 p-3">
+                            <p class="text-dark my-3">ثبت نام در رویداد</p>
                             <p class="text-dark my-3">لطفا جهت ثبت نام در این رویداد، اطلاعات زیر را وارد نمایید</p>
                             <div class="alert alert-danger" style="display: none;"></div>
                             <div class="alert alert-success" style="display: none;"></div>
@@ -169,9 +170,14 @@
                                     <p class="color-text" id="show_discount"></p>
                                 </div>
                                 @endif
-                                <button class="btn btn-danger btn-block mb-3 py-3 text-white" type="submit">ثبت
-                                    نام در رویداد
-                                </button>
+
+                                @if(Auth::user())
+                                <button class="btn btn-danger btn-block mb-3 py-3 text-white" type="submit">ثبت نام در رویداد</button>
+                                @else
+                                <button class="btn btn-danger btn-block mb-3 py-3 text-white" type="button" id="registerInEvent"
+                                        data-toggle="modal" data-target="#loginModal">ثبت نام در رویداد</button>
+                                @endif
+
                             </form>
 
                         </div>

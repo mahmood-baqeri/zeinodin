@@ -6,6 +6,7 @@ use App\Http\Controllers\Blog\BlogController;
 use App\Http\Controllers\Blog\BlogCategoryController;
 use App\Http\Controllers\Blog\BlogCommentsController;
 use App\Http\Controllers\BiographyController;
+use App\Http\Controllers\UserLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,8 +40,6 @@ Route::get('/business', 'HomeController@business');
 #######
 Route::get('statute', 'HomeController@statute');
 
-Route::get('/user/insert_course', 'UserController@insert_course')->name('insert_course');
-
 Route::get('order', 'UserController@order');
 Route::any('payment/callback', 'UserController@payCallback');
 //Route::get('shop','UserController@add_order');
@@ -71,14 +70,15 @@ Route::group(['prefix' => 'product' ,'namespace' => 'Product'], function () {
     Route::get('/{slug}', 'ProductController@detail')->name('product.detail');
     Route::get('search/item', 'ProductController@search')->name('product.search');
     Route::get('category/{slug}', 'ProductController@category')->name('product.category');
-    Route::get('pay/sale', 'ProductController@pay')->name('product.pay');
+    Route::get('pay/sale', 'ProductController@pay')->name('product.pay')->middleware(['auth']);
     Route::get('pay/callback', 'ProductController@payCallback')->name('product.payCallback');
     Route::get('download/link', 'ProductController@downloadLink')->name('product.downloadLink');
 });
 
 ###############################################################
 
-Route::group(['prefix' => 'admin' , 'middleware' =>'auth'], function () {
+
+Route::group(['prefix' => 'admin' , 'middleware' =>'checkIsAdmin'], function () {
 
     Route::resource('image', 'ImageController');
     Route::resource('works', 'BoniadWorksController');
@@ -142,6 +142,27 @@ Route::group(['prefix' => 'admin' , 'middleware' =>'auth'], function () {
 //Route::post('admin/edit_about' , 'AdminPageController@edit_about');
 
 
+
+
+Route::group(['prefix' => 'user' , 'name' => 'user.'] , function () {
+    Route::POST('authentication', 'UserLoginController@authentication')->name('authentication');
+    Route::POST('register', 'UserLoginController@register')->name('register');
+    Route::middleware(['auth'])->group(function () {
+        Route::get('logout', 'UserLoginController@logout')->name('logout');
+
+        Route::get('/user/insert_course', 'UserController@insert_course')->name('insert_course');
+
+        Route::get('profile', 'UserHomeController@profile')->name('profile');
+        Route::post('updateProfile', 'UserHomeController@updateProfile')->name('updateProfile');
+
+        Route::get('myCourse', 'UserHomeController@myCourse')->name('myCourse');
+        Route::get('myProducts', 'UserHomeController@myProducts')->name('myProducts');
+        Route::get('dashboard', 'UserHomeController@dashboard')->name('dashboard');
+    });
+});
+
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+

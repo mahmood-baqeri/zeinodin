@@ -22,6 +22,7 @@ class Course extends Model
         'img',
         'url',
         'date_insert',
+        'spotKey',
     ];
     public function getUser(){
         return $this->hasOne(User::class,'id','user_id')->withDefault(['name'=>'']);

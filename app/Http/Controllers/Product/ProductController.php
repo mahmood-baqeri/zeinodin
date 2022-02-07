@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Product;
 
 use App\Contact;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LicenseController;
+use App\Http\Controllers\UserHomeController;
+use App\Http\Controllers\ZarinpalController;
 use App\Mail\payProducteMail;
 use App\Menu;
 use App\Product;
@@ -267,6 +270,7 @@ class ProductController extends Controller
 
     public function pay(Request $request)
     {
+        $user = \Illuminate\Support\Facades\Auth::user();
         if ($request->name == "" && $request->email == "" && $request->mobile == "") {
             return redirect()->back()->with('error', 'وارد کردن تمام اطلاعات الزامی است');
         } else {
@@ -275,6 +279,7 @@ class ProductController extends Controller
                 return redirect()->back()->with('error', 'مشکل ناشناخته ، دوباره تلاش کنید');
 
             $sale = ProductSale::create([
+                'user_id' => $user->id,
                 'product_id' => $request->product_id,
                 'seller_name' => $request->name,
                 'seller_mobile' => $request->mobile,
@@ -283,6 +288,7 @@ class ProductController extends Controller
                 'price' => 0,
                 'status' => 0
             ]);
+
 
             $finalPrice = 0;
             $code = ProductDiscount::where("code",  $request->code)->first();
@@ -302,33 +308,71 @@ class ProductController extends Controller
 
             $sale->update(['price' => $finalPrice]);
 
-            return Payment::callbackUrl('https://zeinodin.org/product/pay/callback')->purchase(
-                (new Invoice)->amount((int)$finalPrice)
-                    ->detail(['mobile' => $request->mobile, 'course_id' => $request->course_id, 'email' => $request->email]),
-                function ($driver, $transactionId) use ($sale) {
-                    $sale->update(['transactionId' => $transactionId]);
-                    session()->put('transactionIdProduct', $transactionId);
-                }
-            )->pay()->render();
+
+            $authority = ZarinpalController::purchase($finalPrice , $request->mobile ,$request->email ,'https://zeinodin.org/product/pay/callback');
+            if($authority){
+                $sale->update(['transactionId' => $authority]);
+                ZarinpalController::payment($authority);
+            }else {
+                return redirect()->back();
+            }
+//            return Payment::callbackUrl('https://zeinodin.org/product/pay/callback')->purchase(
+//                (new Invoice)->amount((int)$finalPrice)
+//                    ->detail(['mobile' => $request->mobile, 'course_id' => $request->course_id, 'email' => $request->email]),
+//                function ($driver, $transactionId) use ($sale) {
+//                    $sale->update(['transactionId' => $transactionId]);
+//                    session()->put('transactionIdProduct', $transactionId);
+//                }
+//            )->pay()->render();
 
         }
     }
 
-    public function payCallback()
+    public function payCallback(Request $request)
     {
-        $sale = ProductSale::where('transactionId', session()->get('transactionIdProduct'))->first();
-        session()->forget('transactionIdProduct');
-
+        $sale = ProductSale::where('transactionId', $request['Authority'])->first();
         if (!$sale) return redirect()->route('indexPage');
+        if ($request['Status'] == 'NOK') session()->flash('success' , 'لغو خرید توسط شما');
+        else {
 
-        $returnMsg = "";
+            $verify = ZarinpalController::verify($sale->transactionId, (int)$sale->price);
+            if ($verify) {
+                if ($verify['status'] == 'error') {
+                    session()->flash('error', 'خرید با موفقیت انجام نشد');
+                }
+                if ($verify['status'] == 'success') {
+                    $sale->update(['status' => 1]);
+
+                    $product = Product::find($sale->product_id);
+                    session()->put('downloadLink', $product->link);
+
+                    if ($product->spotKey)
+                        LicenseController::productLicense($sale, $product->spotKey, $sale->user);
+
+                    session()->flash('success', 'خرید با موفقیت انجام شد');
+                    return redirect()->action([UserHomeController::class, 'myProducts']);
+
+                }
+            }
+            else
+                session()->flash('error', 'خرید با موفقیت انجام نشد');
+        }
+        return redirect()->action([UserHomeController::class, 'myProducts']);
+
+        /*
+
+                $returnMsg = "";
         try {
             $receipt = Payment::amount((int)$sale->price)->transactionId($sale->transactionId)->verify();
-            $sale->update(['status', 1]);
+            $sale->update(['status' => 1]);
 
             // Mail::to($sale->seller_email)->send(new SampleEmail($sale->product_id));
             $product = Product::find($sale->product_id);
             session()->put('downloadLink' , $product->link);
+
+            if ($product->spotKey)
+                LicenseController::productLicense($sale , $product->spotKey , $sale->user);
+
 
             $contact_data = Contact::where('id', '1')->first();
             $menu = Menu::where(['parent_id' => '0', ['name', '!=', 'خدمات']])->get();
@@ -339,7 +383,7 @@ class ProductController extends Controller
             $returnMsg = $exception->getMessage();
         }
 
-        return redirect()->route('product.all')->with('payError');
+        **/
     }
 
     public function discount()
